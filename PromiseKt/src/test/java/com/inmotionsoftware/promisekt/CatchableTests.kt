@@ -49,12 +49,10 @@ class CatchableTests {
     fun test__void_specialized_full_recover() {
         val helper: (Throwable) -> Unit = { error ->
             val x = 0
-            Promise<Int>(error = error).recover {
+            Promise<Int>(error = error).guaranteeRecover {
                 Guarantee.value(x+1)
             }.done {
                 assertEquals(1, it)
-            }.catch {
-                fail(it.localizedMessage)
             }
         }
         helper(E.dummy())
@@ -66,7 +64,7 @@ class CatchableTests {
         val x = 0
         Promise.value(x).recover {
             fail()
-            Guarantee.Companion.value(1)
+            Guarantee.value(1)
         }.done {
             assertEquals(x, it)
         }

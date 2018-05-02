@@ -2,7 +2,8 @@ package com.inmotionsoftware.promisekt
 
 import java.util.concurrent.Executor
 
-class Guarantee<T>: Thenable<T>, CatchMixin<T> {
+// A `Guarantee` is a functional abstraction around an asynchronous operation that cannot error.
+class Guarantee<T>: Thenable<T> {
     internal val box: Box<T>
 
     internal constructor(box: Box<T>) {
