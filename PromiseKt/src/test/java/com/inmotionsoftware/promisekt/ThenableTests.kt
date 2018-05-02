@@ -1,6 +1,7 @@
 package com.inmotionsoftware.promisekt
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Test
 
 class ThenableTests {
@@ -11,11 +12,11 @@ class ThenableTests {
     @Test
     fun testGet() {
         Promise.value(1).get {
-            assertEquals(it, 1)
+            assertEquals(1, it)
         }.done {
-            assertEquals(it, 1)
+            assertEquals(1, it)
         }.catch {
-            assert(false) { it.localizedMessage }
+            fail(it.localizedMessage)
         }
     }
 
@@ -24,9 +25,9 @@ class ThenableTests {
         Promise.value(1.0).compactMap {
             it.toInt()
         }.done {
-            assertEquals(it, 1)
+            assertEquals(1, it)
         }.catch {
-            assert(false) { it.localizedMessage }
+            fail(it.localizedMessage)
         }
     }
 
@@ -38,7 +39,7 @@ class ThenableTests {
             when (it) {
                 is E.dummy -> {}
                 else -> {
-                    assert(false) { it.localizedMessage }
+                    fail(it.localizedMessage)
                 }
             }
         }
@@ -46,13 +47,27 @@ class ThenableTests {
 
     @Test
     fun testRejectedPromiseCompactMap() {
+        Promise<String>(error = E.dummy()).compactMap {
+            it.toInt()
+        }.catch {
+            when (it) {
+                is E.dummy -> {}
+                else -> {
+                    fail(it.localizedMessage)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testPMKErrorCompactMap() {
         Promise.value("a").compactMap {
             it.toInt()
         }.catch {
             when (it) {
                 is PMKError.compactMap -> {}
                 else -> {
-                    assert(false) { it.localizedMessage }
+                    fail(it.localizedMessage)
                 }
             }
         }
@@ -65,7 +80,47 @@ class ThenableTests {
         }.done {
             assertEquals(it, arrayListOf("1", "2", "4"))
         }.catch {
-            assert(false) { it.localizedMessage }
+            fail(it.localizedMessage)
         }
+    }
+
+//    @Test
+//    fun testThenMap() {
+//        Promise.value(arrayListOf(1,2,3,4)).thenMap {
+//            Promise.value(it)
+//        }.done {
+//            assertEquals(arrayListOf(1,2,3,4), it)
+//        }.catch {
+//            assert(false) { it.localizeMessage }
+//        }
+//    }
+
+//    @Test
+//    fun testThenFlatMap() {
+//        Promise.value(arrayListOf(1,2,3,4)).thenFlatMap {
+//            Promise.value(arrayListOf(it, it))
+//        }.done {
+//            assertEquals(arrayListOf(1,1,2,2,3,3,4,4), it)
+//        }.catch {
+//            assert(false) { it.localizeMessage }
+//        }
+//    }
+
+    @Test
+    fun testLastValueForEmpty() {
+        assert(Promise.value(emptyList<Int>()).lastValue.isRejected)
+    }
+
+    @Test
+    fun testFirstValueForEmpty() {
+        assert(Promise.value(emptyList<Int>()).firstValue.isRejected)
+    }
+
+    @Test
+    fun testThenOffRejected() {
+        Promise<Int>(error = PMKError.badInput()).then {
+            fail()
+            Promise.value(it)
+        }.catch { }
     }
 }

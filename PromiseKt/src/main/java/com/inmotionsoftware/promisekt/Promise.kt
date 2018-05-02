@@ -11,6 +11,11 @@ class Promise<T>: Thenable<T>, CatchMixin<T> {
         this.box = EmptyBox()
     }
 
+    // Initialize a new rejected promise.
+    constructor(error: Throwable) {
+        this.box = SealedBox(value = Result.rejected(error))
+    }
+
     // Initialize a new promise bound to the provided `Thenable`.
     constructor(bridge: Thenable<T>) {
         this.box = EmptyBox()
@@ -36,11 +41,6 @@ class Promise<T>: Thenable<T>, CatchMixin<T> {
         // Returns a tuple of a new pending promise and its `Resolver`.
         fun <T> pending(): Pair<Promise<T>, Resolver<T>> {
             return { p: Promise<T> -> Pair(p, Resolver<T>(p.box)) }(Promise(PMKUnambiguousInitializer.pending))
-        }
-
-        // Returns a new rejected promise.
-        fun <Throwable> error(error: Throwable): Promise<Throwable> {
-            return Promise<Throwable>(box = SealedBox(value = Result.fulfilled(error)))
         }
     }
 

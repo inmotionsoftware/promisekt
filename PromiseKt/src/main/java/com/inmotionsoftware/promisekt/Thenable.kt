@@ -24,6 +24,9 @@ fun <T, U: Thenable<T>> Thenable<T>.then(on: Executor? = conf.Q.map, body: (T) -
                     }
                 }
             }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
         }
     }
     return rp
@@ -155,7 +158,7 @@ fun <E, T: Collection<E>, U> Thenable<T>.flatMapValues(on: Executor? = conf.Q.ma
         }
     }
 }
-g
+
 fun <E, T: Collection<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<List<U>> {
     return map(on = on) { foo ->
         foo.flatMap {
