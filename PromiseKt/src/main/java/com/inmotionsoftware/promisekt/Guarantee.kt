@@ -2,7 +2,7 @@ package com.inmotionsoftware.promisekt
 
 import java.util.concurrent.Executor
 
-class Guarantee<T>: Thenable<T> {
+class Guarantee<T>: Thenable<T>, CatchMixin<T> {
     internal val box: Box<T>
 
     internal constructor(box: Box<T>) {
