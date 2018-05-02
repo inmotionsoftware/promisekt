@@ -78,7 +78,7 @@ class ThenableTests {
         Promise.value(arrayListOf("1", "2", "a", "4")).compactMapValues { value ->
             try { value.toInt() } catch (e: Exception) { null }
         }.done {
-            assertEquals(it, arrayListOf("1", "2", "4"))
+            assertEquals(arrayListOf(1, 2, 4), it)
         }.catch {
             fail(it.localizedMessage)
         }

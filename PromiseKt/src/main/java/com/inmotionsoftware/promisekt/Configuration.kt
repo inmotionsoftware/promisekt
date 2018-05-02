@@ -9,11 +9,15 @@ class CurrentThreadExecutor: Executor {
     }
 }
 
+object DispatchExecutor {
+    val main: Executor by lazy { CurrentThreadExecutor() }
+    val global: Executor by lazy { Executors.newCachedThreadPool() }
+}
+
 object PMKConfiguration {
     data class Value(val map: Executor?, val `return`: Executor?)
-    private val executor = CurrentThreadExecutor()
 
-    var Q: Value = Value(map = executor, `return` = executor)
+    var Q: Value = Value(map = DispatchExecutor.main, `return` = DispatchExecutor.main)
     var catchPolicy: CatchPolicy = CatchPolicy.allErrorsExceptCancellation
 }
 
