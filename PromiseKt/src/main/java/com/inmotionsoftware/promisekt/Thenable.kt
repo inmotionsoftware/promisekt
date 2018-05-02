@@ -146,11 +146,11 @@ val <T> Thenable<T>.value: T? get() {
 
 // Thenable where T: Collection
 
-fun <E, T: Collection<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<List<U>> {
+fun <E, T: Iterable<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<Iterable<U>> {
     return map(on = on){ it.map(transform) }
 }
 
-fun <E, T: Collection<E>, U> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<List<U>> {
+fun <E, T: Iterable<E>, U> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<Iterable<U>> {
     return map(on = on) { foo ->
         foo.flatMap {
             val value = transform(it)
@@ -159,7 +159,7 @@ fun <E, T: Collection<E>, U> Thenable<T>.flatMapValues(on: Executor? = conf.Q.ma
     }
 }
 
-fun <E, T: Collection<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<List<U>> {
+fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<Iterable<U>> {
     return map(on = on) { foo ->
         foo.flatMap {
             val value = transform(it)
@@ -168,16 +168,16 @@ fun <E, T: Collection<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q
     }
 }
 
-//fun <E, T: Collection<E>, U: Thenable<T>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<List<U>> {
+//fun <E, T: Iterable<E>, U: Thenable<T>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<List<U>> {
 //    return then(on = on) {
 //    }
 //}
 
-fun <E, T: Collection<E>> Thenable<T>.filterValues(on: Executor? = conf.Q.map, isIncluded: (E) -> Boolean): Promise<List<E>> {
+fun <E, T: Iterable<E>> Thenable<T>.filterValues(on: Executor? = conf.Q.map, isIncluded: (E) -> Boolean): Promise<Iterable<E>> {
     return map(on = on) { it.filter(isIncluded)}
 }
 
-val <E, T: Collection<E>> Thenable<T>.firstValue: Promise<E>
+val <E, T: Iterable<E>> Thenable<T>.firstValue: Promise<E>
     get() {
     return map(on = null) { aa ->
         try {
@@ -188,7 +188,7 @@ val <E, T: Collection<E>> Thenable<T>.firstValue: Promise<E>
     }
 }
 
-val <E, T: Collection<E>> Thenable<T>.lastValue: Promise<E>
+val <E, T: Iterable<E>> Thenable<T>.lastValue: Promise<E>
     get() {
     return map(on = null) { aa ->
         try {
@@ -199,6 +199,6 @@ val <E, T: Collection<E>> Thenable<T>.lastValue: Promise<E>
     }
 }
 
-fun <E: Comparable<E>, T: Collection<E>> Thenable<T>.sortedValues(on: Executor? = conf.Q.map, selector: (E) -> E?): Promise<List<E>> {
+fun <E: Comparable<E>, T: Iterable<E>> Thenable<T>.sortedValues(on: Executor? = conf.Q.map, selector: (E) -> E?): Promise<Iterable<E>> {
     return map(on = on) { it.sortedBy(selector) }
 }
