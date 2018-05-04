@@ -34,7 +34,7 @@ private fun <T, U: Thenable<T>> _when(thenables: Iterable<U>, executor: Executor
     try {
         executor.shutdown()
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         rp.box.seal(Result.rejected(e))
     }
     return rp

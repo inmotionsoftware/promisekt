@@ -2,6 +2,7 @@ package com.inmotionsoftware.promisekt
 
 import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenFulfilled
 import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenGuarantee
+import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenResolved
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -17,9 +18,10 @@ class WhenTests: AsyncTests() {
 
     @Test
     fun testEmpty() {
-        val e = CountDownLatch(1)
+        val e = CountDownLatch(2)
         val promises: Iterable<Promise<Unit>> = emptyList()
         whenFulfilled(promises).done { e.countDown() }
+        whenResolved(promises).done { e.countDown() }
         wait(countDown = e, timeout = 30)
     }
 
@@ -100,13 +102,8 @@ class WhenTests: AsyncTests() {
     @Test
     fun testGuaranteeWhen() {
         val e = CountDownLatch(2)
-        whenGuarantee(Guarantee.value(Unit), Guarantee.value(Unit)).done {
-            e.countDown()
-        }
-
-        whenGuarantee(arrayListOf(Guarantee.value(Unit), Guarantee.value(Unit))).done {
-            e.countDown()
-        }
+        whenGuarantee(Guarantee.value(Unit), Guarantee.value(Unit)).done { e.countDown() }
+        whenGuarantee(arrayListOf(Guarantee.value(Unit), Guarantee.value(Unit))).done { e.countDown() }
         wait(countDown = e, timeout = 10)
     }
 

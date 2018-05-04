@@ -15,7 +15,7 @@ abstract class AsyncTests {
         try {
             executor.shutdown()
             executor.awaitTermination(timeout, timeUnit)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Assert.fail()
         }
     }

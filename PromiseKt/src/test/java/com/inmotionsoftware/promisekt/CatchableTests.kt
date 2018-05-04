@@ -1,5 +1,6 @@
 package com.inmotionsoftware.promisekt
 
+import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.after
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
@@ -207,29 +208,29 @@ class CatchableTests {
         }
     }
 
-//    @Test
-//    fun testEnsureThen_Error() {
-//        Promise.value(1).done {
-//            assertEquals(1, it)
-//            throw E.dummy()
-//        }.ensureThen {
-//            after(seconds: 0.01)
-//        }.catch {
-////            assertEquals(Error.dummy, $0 as? Error)
-//        }.finally {
-//        }
-//    }
-//
-//    @Test
-//    fun testEnsureThen_Value() {
-//        Promise.value(1).ensureThen {
-//            after(seconds: 0.01)
-//        }.done {
-//            assertEquals(1, it)
-//        }.catch {
-//            fail()
-//        }.finally {
-//        }
-//    }
+    @Test
+    fun testEnsureThen_Error() {
+        Promise.value(1).done {
+            assertEquals(1, it)
+            throw E.dummy()
+        }.ensureThen {
+            after(seconds = 0.01)
+        }.catch {
+//            assertEquals(Error.dummy, $0 as? Error)
+        }.finally {
+        }
+    }
+
+    @Test
+    fun testEnsureThen_Value() {
+        Promise.value(1).ensureThen {
+            after(seconds = 0.01)
+        }.done {
+            assertEquals(1, it)
+        }.catch {
+            fail()
+        }.finally {
+        }
+    }
 
 }
