@@ -1,5 +1,6 @@
 package com.inmotionsoftware.promisekt
 
+import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenFulfilled
 import java.util.concurrent.Executor
 
 interface Thenable<T> {
@@ -108,7 +109,7 @@ fun <T> Thenable<T>.get(on: Executor? = conf.Q.`return`, body: (T) -> Unit): Pro
     }
 }
 
-fun Thenable<Unit>.asVoid(): Promise<Unit> {
+fun <T> Thenable<T>.asVoid(): Promise<Unit> {
     return map(on = null) { }
 }
 
@@ -144,7 +145,7 @@ val <T> Thenable<T>.value: T? get() {
     }
 }
 
-// Thenable where T: Collection
+// Thenable where T: Iterable
 
 fun <E, T: Iterable<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<Iterable<U>> {
     return map(on = on){ it.map(transform) }
@@ -168,10 +169,49 @@ fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.m
     }
 }
 
-//fun <E, T: Iterable<E>, U: Thenable<T>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<List<U>> {
-//    return then(on = on) {
-//    }
-//}
+fun <E, T: Iterable<E>, U, TU: Thenable<U>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<U>> {
+    val rp = Promise<Iterable<U>>(PMKUnambiguousInitializer.pending)
+    pipe {
+        when (it) {
+            is Result.fulfilled -> {
+                on.async {
+                    try {
+                        val rv = whenFulfilled(it.value.map(transform))
+                        rv.pipe(to = rp.box::seal)
+                    } catch (e: Throwable) {
+                        rp.box.seal(Result.rejected(e))
+                    }
+                }
+            }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
+        }
+    }
+    return rp
+}
+
+fun <E, T: Iterable<E>, UE, U: Iterable<UE>, TU: Thenable<U>> Thenable<T>.thenFlatMap(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<UE>> {
+    val rp = Promise<Iterable<UE>>(PMKUnambiguousInitializer.pending)
+    pipe {
+        when (it) {
+            is Result.fulfilled -> {
+                on.async {
+                    try {
+                        val rv = whenFulfilled(it.value.map(transform)).map(on = null) { it.flatMap { it }.asIterable() }
+                        rv.pipe(to = rp.box::seal)
+                    } catch (e: Throwable) {
+                        rp.box.seal(Result.rejected(e))
+                    }
+                }
+            }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
+        }
+    }
+    return rp
+}
 
 fun <E, T: Iterable<E>> Thenable<T>.filterValues(on: Executor? = conf.Q.map, isIncluded: (E) -> Boolean): Promise<Iterable<E>> {
     return map(on = on) { it.filter(isIncluded)}

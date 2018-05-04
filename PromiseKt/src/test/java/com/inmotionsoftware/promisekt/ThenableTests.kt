@@ -84,27 +84,27 @@ class ThenableTests {
         }
     }
 
-//    @Test
-//    fun testThenMap() {
-//        Promise.value(arrayListOf(1,2,3,4)).thenMap {
-//            Promise.value(it)
-//        }.done {
-//            assertEquals(arrayListOf(1,2,3,4), it)
-//        }.catch {
-//            assert(false) { it.localizeMessage }
-//        }
-//    }
+    @Test
+    fun testThenMap() {
+        Promise.value(arrayListOf(1,2,3,4)).thenMap {
+            Promise.value(it * 2)
+        }.done {
+            assertEquals(arrayListOf(2,4,6,8), it)
+        }.catch {
+            assert(false) { it.localizedMessage }
+        }
+    }
 
-//    @Test
-//    fun testThenFlatMap() {
-//        Promise.value(arrayListOf(1,2,3,4)).thenFlatMap {
-//            Promise.value(arrayListOf(it, it))
-//        }.done {
-//            assertEquals(arrayListOf(1,1,2,2,3,3,4,4), it)
-//        }.catch {
-//            assert(false) { it.localizeMessage }
-//        }
-//    }
+    @Test
+    fun testThenFlatMap() {
+        Promise.value(arrayListOf(1,2,3,4)).thenFlatMap {
+            Promise.value(arrayListOf(it, it))
+        }.done {
+            assertEquals(arrayListOf(1,1,2,2,3,3,4,4), it)
+        }.catch {
+            assert(false) { it.localizedMessage }
+        }
+    }
 
     @Test
     fun testLastValueForEmpty() {
