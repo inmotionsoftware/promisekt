@@ -1,7 +1,5 @@
 package com.inmotionsoftware.promisekt
 
-import java.util.concurrent.Executor
-
 sealed class Sealant<R> {
     class pending<R>(val handlers: Handlers<R>): Sealant<R>()
     class resolved<R>(val value: R): Sealant<R>()
