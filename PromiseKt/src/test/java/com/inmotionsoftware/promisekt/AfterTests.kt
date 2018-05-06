@@ -1,6 +1,6 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.after
+import com.inmotionsoftware.promisekt.features.after
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
 

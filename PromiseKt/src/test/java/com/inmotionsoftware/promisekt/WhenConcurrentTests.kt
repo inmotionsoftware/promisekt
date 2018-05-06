@@ -1,7 +1,7 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.after
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenFulfilled
+import com.inmotionsoftware.promisekt.features.after
+import com.inmotionsoftware.promisekt.features.whenFulfilled
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test

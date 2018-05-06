@@ -1,8 +1,8 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenFulfilled
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenGuarantee
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenResolved
+import com.inmotionsoftware.promisekt.features.whenFulfilled
+import com.inmotionsoftware.promisekt.features.whenGuarantee
+import com.inmotionsoftware.promisekt.features.whenResolved
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

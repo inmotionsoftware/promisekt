@@ -1,4 +1,4 @@
-package com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features
+package com.inmotionsoftware.promisekt.features
 
 import com.inmotionsoftware.promisekt.DispatchExecutor
 import com.inmotionsoftware.promisekt.Guarantee

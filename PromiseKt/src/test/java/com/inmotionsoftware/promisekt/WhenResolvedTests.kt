@@ -1,6 +1,6 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenResolved
+import com.inmotionsoftware.promisekt.features.whenResolved
 import org.junit.Test
 
 class WhenResolvedTests: AsyncTests() {

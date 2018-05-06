@@ -1,7 +1,7 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.after
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.race
+import com.inmotionsoftware.promisekt.features.after
+import com.inmotionsoftware.promisekt.features.race
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
@@ -12,7 +12,7 @@ class RaceTests: AsyncTests() {
     @Test
     fun test1() {
         val e = CountDownLatch(1)
-        race(after(0.01).thenPromise{ Promise.value(1) }, after(1.0).map{ 2 }).done { index ->
+        race(after(0.01).thenPromise { Promise.value(1) }, after(1.0).map { 2 }).done { index ->
             assertEquals(1, index)
             e.countDown()
         }.catch {
@@ -24,7 +24,7 @@ class RaceTests: AsyncTests() {
     @Test
     fun test2() {
         val e = CountDownLatch(1)
-        race(after(1.0).map{ 1 }, after(0.01).map{ 2 }).done { index ->
+        race(after(1.0).map { 1 }, after(0.01).map { 2 }).done { index ->
             assertEquals(2, index)
             e.countDown()
         }
@@ -45,7 +45,7 @@ class RaceTests: AsyncTests() {
     @Test
     fun test2Array() {
         val e = CountDownLatch(1)
-        race(after(1.0).map{ 1 }, after(.01).map{ 2 }).done { index ->
+        race(after(1.0).map { 1 }, after(.01).map { 2 }).done { index ->
             assertEquals(2, index)
             e.countDown()
         }

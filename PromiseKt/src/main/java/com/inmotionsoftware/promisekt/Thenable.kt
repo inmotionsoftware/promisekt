@@ -1,6 +1,6 @@
 package com.inmotionsoftware.promisekt
 
-import com.inmotionsoftware.promisekt.com.inmotionsoftware.promisekt.features.whenFulfilled
+import com.inmotionsoftware.promisekt.features.whenFulfilled
 import java.util.concurrent.Executor
 
 interface Thenable<T> {
