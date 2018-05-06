@@ -1,5 +1,6 @@
 package com.inmotionsoftware.promisekt
 
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executor
 
 // A `Guarantee` is a functional abstraction around an asynchronous operation that cannot error.
@@ -78,6 +79,27 @@ fun <T, U> Guarantee<T>.map(on: Executor? = conf.Q.map, body: (T) -> U): Guarant
     return rg
 }
 
+fun <T, U> Guarantee<T>.thenMap(on: Executor? = conf.Q.map, transform: (T) -> U): Promise<U> {
+    val rp = Promise<U>(PMKUnambiguousInitializer.pending)
+    pipe {
+        when (it) {
+            is Result.fulfilled -> {
+                on.async {
+                    try {
+                        rp.box.seal(Result.fulfilled(transform(it.value)))
+                    } catch (e: Throwable) {
+                        rp.box.seal(Result.rejected(e))
+                    }
+                }
+            }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
+        }
+    }
+    return rp
+}
+
 fun <T, U> Guarantee<T>.then(on: Executor? = conf.Q.map, body: (T) -> Guarantee<U>): Guarantee<U> {
     val rg = Guarantee<U>(PMKUnambiguousInitializer.pending)
     pipeTo { value ->
@@ -118,17 +140,14 @@ fun Guarantee<Unit>.asVoid(): Guarantee<Unit> {
 }
 
 fun <T> Guarantee<T>.wait(): T {
-    val lock = Object()
-
-    var result = this.value
-    synchronized(lock) {
+    var result = value
+    if (result == null) {
+        val latch = CountDownLatch(1)
         pipeTo {
-            synchronized(lock) {
-                result = it
-                lock.notifyAll()
-            }
+            result = it
+            latch.countDown()
         }
-        lock.wait()
+        latch.await()
     }
     return result!!
 }

@@ -1,5 +1,7 @@
 package com.inmotionsoftware.promisekt
 
+import java.util.concurrent.CountDownLatch
+
 class Promise<T>: Thenable<T>, CatchMixin<T> {
     internal val box: Box<Result<T>>
 
@@ -76,17 +78,14 @@ fun <T> Promise<T>.tap(body: (Result<T>) -> Unit): Promise<T> {
 }
 
 fun <T> Promise<T>.wait(): T {
-    val lock = Object()
-
     var result = this.result
-    synchronized(lock) {
+    if (result == null) {
+        val latch = CountDownLatch(1)
         pipe {
-            synchronized(lock) {
-                result = it
-                lock.notifyAll()
-            }
+            result = it
+            latch.countDown()
         }
-        lock.wait()
+        latch.await()
     }
 
     val r = result!!
@@ -94,6 +93,11 @@ fun <T> Promise<T>.wait(): T {
         is Result.fulfilled -> r.value
         is Result.rejected -> throw r.error
     }
+}
+
+/// used by our extensions to provide unambiguous functions with the same name as the original function
+enum class PMKNamespacer {
+    promise
 }
 
 enum class PMKUnambiguousInitializer {

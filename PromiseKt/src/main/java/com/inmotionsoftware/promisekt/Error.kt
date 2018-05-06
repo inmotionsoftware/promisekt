@@ -26,12 +26,12 @@ interface CancellableError {
 }
 
 val Throwable.isCancelled: Boolean get() {
-    try {
+    return try {
         throw this
     } catch (e: PMKError.cancelled) {
-        return true
+        true
     } catch (e: Throwable) {
-        return if (e is CancellableError) { e.isCancelled } else { false }
+        if (e is CancellableError) { e.isCancelled } else { false }
     }
 }
 

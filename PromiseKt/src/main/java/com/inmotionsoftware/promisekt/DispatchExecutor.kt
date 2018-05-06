@@ -17,6 +17,18 @@ fun Executor?.async(body: () -> Unit) {
     }
 }
 
+fun <T> Executor?.async(namespace: PMKNamespacer, body: () -> T): Promise<T> {
+    val promise = Promise<T>(PMKUnambiguousInitializer.pending)
+    async {
+        try {
+            promise.box.seal(Result.fulfilled(body()))
+        } catch( e: Throwable) {
+            promise.box.seal(Result.rejected(e))
+        }
+    }
+    return promise
+}
+
 fun Executor.asyncAfter(seconds: Double, invoke: () -> Unit) {
     execute {
         Thread.sleep((max(seconds, 0.0) * 1000).toLong())

@@ -132,7 +132,7 @@ fun <T> whenResolved(promises: Iterable<Promise<T>>): Guarantee<Iterable<Result<
 
     val rg = Guarantee.pending<Iterable<Result<T>>>()
     promises.forEach { promise ->
-        promise.pipe { result ->
+        promise.pipe {
             if (countdown.decrementAndGet() == 0) {
                 rg.first.box.seal(promises.map { it.result!! })
             }

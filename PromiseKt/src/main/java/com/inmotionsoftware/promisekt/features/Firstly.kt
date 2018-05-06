@@ -6,15 +6,15 @@ import com.inmotionsoftware.promisekt.Promise
 import com.inmotionsoftware.promisekt.Thenable
 
 fun <T, U: Thenable<T>> firstly(body: () -> U): Promise<T> {
-    try {
+    return try {
         val rp = Promise<T>(PMKUnambiguousInitializer.pending)
         body().pipe(to = rp.box::seal )
-        return rp
+        rp
     } catch (e: Throwable) {
-        return Promise(error = e)
+        Promise(error = e)
     }
 }
 
-fun <T> firstly(body: () -> Guarantee<T>): Guarantee<T> {
+fun <T, U: Guarantee<T>> firstlyGuarantee(body: () -> U): Guarantee<T> {
     return body()
 }
