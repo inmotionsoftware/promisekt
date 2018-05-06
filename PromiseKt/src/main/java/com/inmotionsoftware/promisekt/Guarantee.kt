@@ -88,6 +88,31 @@ fun <T, U> Guarantee<T>.then(on: Executor? = conf.Q.map, body: (T) -> Guarantee<
     return rg
 }
 
+fun <T, U> Guarantee<T>.thenPromise(on: Executor? = conf.Q.map, body: (T) -> Promise<U>): Promise<U> {
+    val rp = Promise<U>(PMKUnambiguousInitializer.pending)
+    pipe {
+        when (it) {
+            is Result.fulfilled -> {
+                on.async {
+                    try {
+                        val rv = body(it.value)
+                        if (rv === rp) {
+                            throw PMKError.returnedSelf()
+                        }
+                        rv.pipe(to = rp.box::seal)
+                    } catch (e: Throwable) {
+                        rp.box.seal(Result.rejected(e))
+                    }
+                }
+            }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
+        }
+    }
+    return rp
+}
+
 fun Guarantee<Unit>.asVoid(): Guarantee<Unit> {
     return map(on = null) { }
 }

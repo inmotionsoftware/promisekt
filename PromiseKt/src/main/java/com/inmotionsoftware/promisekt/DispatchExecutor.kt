@@ -5,14 +5,8 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.math.max
 
-class CurrentThreadExecutor: Executor {
-    override fun execute(command: Runnable?) {
-        command?.run()
-    }
-}
-
 object DispatchExecutor {
-    val main: Executor = CurrentThreadExecutor()
+    val main: Executor by lazy { Executors.newSingleThreadExecutor() }
     val global: Executor by lazy { Executors.newCachedThreadPool() }
 }
 

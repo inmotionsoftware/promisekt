@@ -78,7 +78,9 @@ fun <T, U: Thenable<T>> whenFulfilled(promises: Iterable<U>, concurrently: Int):
         fun testDone() {
             DispatchExecutor.global.sync {
                 if (pendingPromises.get() == 0) {
-                    root.second.fulfill(promiseList.flatMap{ arrayListOf(it.value!!) })
+                    root.second.fulfill(promiseList.flatMap{
+                        if (it.value != null) arrayListOf(it.value!!) else arrayListOf()
+                    })
                 }
             }
         }
