@@ -31,8 +31,7 @@ val Throwable.isCancelled: Boolean get() {
     } catch (e: PMKError.cancelled) {
         return true
     } catch (e: Throwable) {
-        if (e is CancellableError) { return true }
-        return false
+        return if (e is CancellableError) { e.isCancelled } else { false }
     }
 }
 

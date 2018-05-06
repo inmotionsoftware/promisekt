@@ -47,8 +47,7 @@ fun <T, U: Thenable<T>> CatchMixin<T>.recover(on: Executor? = PMKConfiguration.Q
                     on.async {
                         try {
                             val rv = body(it.error)
-                            if (rv === rp) { throw PMKError.returnedSelf()
-                            }
+                            if (rv === rp) { throw PMKError.returnedSelf() }
                             rv.pipe(to = rp.box::seal)
                         } catch (e: Throwable) {
                             rp.box.seal(Result.rejected(it.error))
@@ -104,7 +103,7 @@ fun <T> CatchMixin<T>.ensureThen(on: Executor? = PMKConfiguration.Q.`return`, bo
 }
 
 fun <T> CatchMixin<T>.cauterize() {
-    this.catch {
+    catch {
         println("PromiseKot:cauterized-error: $it")
     }
 }

@@ -22,7 +22,7 @@ class WhenTests: AsyncTests() {
         val promises: Iterable<Promise<Unit>> = emptyList()
         whenFulfilled(promises).done { e.countDown() }
         whenResolved(promises).done { e.countDown() }
-        wait(countDown = e, timeout = 30)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test
@@ -41,7 +41,7 @@ class WhenTests: AsyncTests() {
             assertEquals(4, values[3])
             e.countDown()
         }
-        wait(countDown = e, timeout = 30)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test
@@ -54,7 +54,7 @@ class WhenTests: AsyncTests() {
             assertEquals(pair.second, "abc")
             e.countDown()
         }
-        wait(countDown = e, timeout = 1)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test
@@ -66,10 +66,10 @@ class WhenTests: AsyncTests() {
         whenFulfilled(p1, p2, p3).done { triple ->
             assertEquals(triple.first, 1)
             assertEquals(triple.second, "abc")
-            assertEquals(triple.third, 1.0)
+            assertEquals(triple.third, 1.0, 0.01)
             e.countDown()
         }
-        wait(countDown = e, timeout = 1)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test
@@ -81,7 +81,7 @@ class WhenTests: AsyncTests() {
         val p4 = Promise.value(4).done { }
 
         whenFulfilled(arrayListOf(p1, p2, p3, p4)).done { e.countDown() }
-        wait(countDown = e, timeout = 1)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test
@@ -96,7 +96,7 @@ class WhenTests: AsyncTests() {
             assertTrue(error == test1)
             e.countDown()
         }
-        wait(countDown = e, timeout = 1)
+        wait(countDown = e, timeout = 10)
     }
 
     @Test

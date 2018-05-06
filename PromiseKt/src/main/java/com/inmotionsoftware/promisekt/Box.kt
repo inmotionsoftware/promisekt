@@ -86,10 +86,3 @@ class EmptyBox<T>: Box<T> {
         }
     }
 }
-
-fun Executor?.async(body: () -> Unit) {
-    when (this) {
-        null -> body()
-        else -> execute { body() }
-    }
-}
