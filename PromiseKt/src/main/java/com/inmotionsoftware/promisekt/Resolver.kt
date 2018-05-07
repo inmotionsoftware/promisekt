@@ -2,11 +2,11 @@ package com.inmotionsoftware.promisekt
 
 class Resolver<T>(val box: Box<Result<T>>) {
     // This is probably not working as intended in the JVM
-    protected fun finallize() {
-        when (this.box.inspect()) {
-            is Sealant.pending -> print("PMKPromise: warning: pending promise deallocated")
-        }
-    }
+//    protected fun finallize() {
+//        when (this.box.inspect()) {
+//            is Sealant.pending -> print("PMKPromise: warning: pending promise deallocated")
+//        }
+//    }
 }
 
 fun <T> Resolver<T>.fulfill(value: T) {
@@ -27,6 +27,10 @@ fun <T> Resolver<T>.resolve(value: T?, error: Throwable?) {
         value != null -> this.fulfill(value)
         else -> this.reject(PMKError.invalidCallingConvention())
     }
+}
+
+fun <T>Resolver<T>.resolve(error: Throwable?, obj: T?) {
+    this.resolve(obj, error)
 }
 
 fun Resolver<Unit>.resolve(error: Throwable?) {
