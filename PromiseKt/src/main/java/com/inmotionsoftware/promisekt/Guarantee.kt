@@ -58,7 +58,7 @@ class Guarantee<T>: Thenable<T> {
     }
 }
 
-fun <T> Guarantee<T>.done(on: Executor? = conf.Q.`return`, body: (T) -> Unit): Guarantee<Unit> {
+fun <T> Guarantee<T>.guaranteeDone(on: Executor? = conf.Q.`return`, body: (T) -> Unit): Guarantee<Unit> {
     val rg = Guarantee<Unit>(PMKUnambiguousInitializer.pending)
     pipeTo { value ->
         on.async {
@@ -69,7 +69,7 @@ fun <T> Guarantee<T>.done(on: Executor? = conf.Q.`return`, body: (T) -> Unit): G
     return rg
 }
 
-fun <T, U> Guarantee<T>.map(on: Executor? = conf.Q.map, body: (T) -> U): Guarantee<U> {
+fun <T, U> Guarantee<T>.mapGuarantee(on: Executor? = conf.Q.map, body: (T) -> U): Guarantee<U> {
     val rg = Guarantee<U>(PMKUnambiguousInitializer.pending)
     pipeTo { value ->
         on.async {
@@ -79,7 +79,7 @@ fun <T, U> Guarantee<T>.map(on: Executor? = conf.Q.map, body: (T) -> U): Guarant
     return rg
 }
 
-fun <T, U> Guarantee<T>.thenMap(on: Executor? = conf.Q.map, transform: (T) -> U): Promise<U> {
+fun <T, U> Guarantee<T>.mapPromise(on: Executor? = conf.Q.map, transform: (T) -> U): Promise<U> {
     val rp = Promise<U>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
@@ -135,8 +135,8 @@ fun <T, U> Guarantee<T>.thenPromise(on: Executor? = conf.Q.map, body: (T) -> Pro
     return rp
 }
 
-fun Guarantee<Unit>.asVoid(): Guarantee<Unit> {
-    return map(on = null) { }
+fun <T> Guarantee<T>.asGuaranteeVoid(): Guarantee<Unit> {
+    return mapGuarantee(on = null) { }
 }
 
 fun <T> Guarantee<T>.wait(): T {

@@ -45,6 +45,25 @@ class WhenTests: AsyncTests() {
     }
 
     @Test
+    fun testVararg() {
+        val e = CountDownLatch(1)
+        val p1: Promise<Int> = Promise.value(1)
+        val p2: Promise<Int> = Promise.value(2)
+        val p3: Promise<Int> = Promise.value(3)
+        val p4: Promise<Int> = Promise.value(4)
+
+        whenFulfilled(p1, p2, p3, p4).done {
+            val values = it.toList()
+            assertEquals(1, values[0])
+            assertEquals(2, values[1])
+            assertEquals(3, values[2])
+            assertEquals(4, values[3])
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
     fun testDoubleTuple() {
         val e = CountDownLatch(1)
         val p1 = Promise.value(1)

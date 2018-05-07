@@ -89,7 +89,7 @@ class ThenableTests: AsyncTests() {
     @Test
     fun testMapValues() {
         val e = CountDownLatch(1)
-        Promise.value(arrayListOf("1", "2", "3", "4")).compactMapValues { value ->
+        Promise.value(arrayListOf("1", "2", "3", "4")).mapValues { value ->
             value.toInt()
         }.done {
             assertEquals(arrayListOf(1, 2, 3, 4), it)

@@ -2,6 +2,7 @@ package com.inmotionsoftware.promisekt
 
 import com.inmotionsoftware.promisekt.features.after
 import com.inmotionsoftware.promisekt.features.race
+import com.inmotionsoftware.promisekt.features.raceGuarantee
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
@@ -24,7 +25,7 @@ class RaceTests: AsyncTests() {
     @Test
     fun test2() {
         val e = CountDownLatch(1)
-        race(after(1.0).map { 1 }, after(0.01).map { 2 }).done { index ->
+        raceGuarantee(after(1.0).mapGuarantee { 1 }, after(0.01).mapGuarantee { 2 }).done { index ->
             assertEquals(2, index)
             e.countDown()
         }

@@ -1,6 +1,9 @@
 package com.inmotionsoftware.promisekt
 
 import com.inmotionsoftware.promisekt.features.after
+import com.inmotionsoftware.promisekt.features.firstly
+import com.inmotionsoftware.promisekt.features.firstlyGuarantee
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
@@ -33,9 +36,34 @@ class GuaranteeTests: AsyncTests() {
     }
 
     @Test
+    fun testDone() {
+        val e = CountDownLatch(1)
+        Guarantee.value(1).thenGuarantee {
+            assertEquals(1, it)
+            Guarantee.value(2)
+        }.guaranteeDone {
+            assertEquals(2, it)
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
     fun testAsVoid() {
         val e = CountDownLatch(1)
-        Guarantee.value(1).asVoid().done { e.countDown() }
+        Guarantee.value(1).asGuaranteeVoid().done { e.countDown() }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
+    fun testFirstly() {
+        val e = CountDownLatch(1)
+
+        firstlyGuarantee {
+            Guarantee.value(1)
+        }.done {
+            e.countDown()
+        }
         wait(countDown = e, timeout = 10)
     }
 

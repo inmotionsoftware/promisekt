@@ -62,7 +62,7 @@ fun <T, U: Thenable<T>> CatchMixin<T>.recover(on: Executor? = PMKConfiguration.Q
     return rp
 }
 
-fun <T> CatchMixin<T>.guaranteeRecover(on: Executor? = PMKConfiguration.Q.map, body: (Throwable) -> Guarantee<T>): Guarantee<T> {
+fun <T> CatchMixin<T>.recoverGuarantee(on: Executor? = PMKConfiguration.Q.map, body: (Throwable) -> Guarantee<T>): Guarantee<T> {
     val rg = Guarantee<T>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {

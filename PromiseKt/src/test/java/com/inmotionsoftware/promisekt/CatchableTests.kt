@@ -58,7 +58,11 @@ class CatchableTests: AsyncTests() {
     fun test__void_specialized_full_recover() {
         val helper: (Throwable) -> Unit = { error ->
             val e = CountDownLatch(1)
-            Promise<Unit>(error = error).guaranteeRecover { Guarantee.value(Unit) }.done { e.countDown() }
+            Promise<Unit>(error = error).recoverGuarantee {
+                Guarantee.value(Unit)
+            }.done {
+                e.countDown()
+            }
             wait(countDown = e, timeout = 10)
         }
         helper(E.dummy())
@@ -133,7 +137,7 @@ class CatchableTests: AsyncTests() {
         val e = CountDownLatch(1)
         Promise.value(Unit).recover {
             fail()
-            Guarantee.value(Unit)
+            Promise.value(Unit)
         }.catch {
             fail()
         }.finally {
@@ -150,7 +154,7 @@ class CatchableTests: AsyncTests() {
     fun test__full_recover() {
         val helper: (Throwable) -> Unit = { error ->
             val e = CountDownLatch(1)
-            Promise<Int>(error = error).guaranteeRecover {
+            Promise<Int>(error = error).recoverGuarantee {
                 Guarantee.value(2)
             }.done {
                 assertEquals(2, it)

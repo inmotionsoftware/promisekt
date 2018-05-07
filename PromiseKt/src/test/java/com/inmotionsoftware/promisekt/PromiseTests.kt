@@ -119,7 +119,7 @@ class PromiseTests: AsyncTests() {
         assertEquals(try { p.wait() } catch(e: Throwable) {}, 1)
 
         try {
-            val p1 = after(0.1).thenMap(on = null){ throw LocalError.dummy() }
+            val p1 = after(0.1).mapPromise (on = null){ throw LocalError.dummy() }
             p1.wait()
         } catch(e: Throwable) {
             assertTrue(e is LocalError.dummy)

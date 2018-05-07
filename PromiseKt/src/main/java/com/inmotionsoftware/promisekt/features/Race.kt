@@ -18,7 +18,7 @@ fun <T, U: Thenable<T>> race(thenables: Iterable<U>): Promise<T> {
     return if (thenables.count() == 0) Promise(error = PMKError.badInput()) else _race(thenables.asIterable())
 }
 
-fun <T, U: Guarantee<T>> race(vararg guarantees: U): Guarantee<T> {
+fun <T, U: Guarantee<T>> raceGuarantee(vararg guarantees: U): Guarantee<T> {
     val rg = Guarantee<T>(PMKUnambiguousInitializer.pending)
     guarantees.forEach {
         it.pipeTo(to = rg.box::seal)

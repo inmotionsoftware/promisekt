@@ -110,8 +110,8 @@ fun <T, U: Thenable<T>> whenFulfilled(promises: Iterable<U>, concurrently: Int):
     return root.first
 }
 
-fun <U: Thenable<Unit>> whenFulfilled(vararg promises: U): Promise<Unit> {
-    return _when(promises.asIterable())
+fun <T, U: Thenable<T>> whenFulfilled(vararg promises: U): Promise<Iterable<T>> {
+    return whenFulfilled(promises.asIterable())
 }
 
 fun <TU, U: Thenable<TU>, TV, V: Thenable<TV>> whenFulfilled(pu: U, pv: V): Promise<Pair<TU, TV>> {
@@ -146,5 +146,5 @@ fun whenGuarantee(vararg guarantees: Guarantee<Unit>): Guarantee<Unit> {
 }
 
 fun whenGuarantee(guarantees: Iterable<Guarantee<Unit>>): Guarantee<Unit> {
-    return whenFulfilled(guarantees).guaranteeRecover { Guarantee.value(arrayListOf()) }.map {  }
+    return whenFulfilled(guarantees).recoverGuarantee { Guarantee.value(arrayListOf()) }.mapGuarantee { }
 }
