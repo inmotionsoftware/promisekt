@@ -100,7 +100,7 @@ fun <T, U> Guarantee<T>.thenMap(on: Executor? = conf.Q.map, transform: (T) -> U)
     return rp
 }
 
-fun <T, U> Guarantee<T>.then(on: Executor? = conf.Q.map, body: (T) -> Guarantee<U>): Guarantee<U> {
+fun <T, U> Guarantee<T>.thenGuarantee(on: Executor? = conf.Q.map, body: (T) -> Guarantee<U>): Guarantee<U> {
     val rg = Guarantee<U>(PMKUnambiguousInitializer.pending)
     pipeTo { value ->
         on.async {

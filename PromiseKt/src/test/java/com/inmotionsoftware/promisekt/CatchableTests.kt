@@ -243,6 +243,22 @@ class CatchableTests: AsyncTests() {
     }
 
     @Test
+    fun testEnsure() {
+        val e = CountDownLatch(1)
+        Promise.value(1).done {
+            assertEquals(1, it)
+            throw E.dummy()
+        }.ensure {
+            after(seconds = 0.01)
+        }.catch {
+            assert(it is E.dummy)
+        }.finally {
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
     fun testEnsureThen_Error() {
         val e = CountDownLatch(1)
         Promise.value(1).done {

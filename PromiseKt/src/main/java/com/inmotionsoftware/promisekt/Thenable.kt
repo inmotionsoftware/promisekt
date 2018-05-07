@@ -151,11 +151,10 @@ fun <E, T: Iterable<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, tra
     return map(on = on){ it.map(transform) }
 }
 
-fun <E, T: Iterable<E>, U> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<Iterable<U>> {
+fun <E, T: Iterable<E>, UE, U: Iterable<UE>> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<Iterable<UE>> {
     return map(on = on) { foo ->
         foo.flatMap {
-            val value = transform(it)
-            if (value != null) listOf(value) else listOf()
+            transform(it).flatMap { listOf(it) }
         }
     }
 }
