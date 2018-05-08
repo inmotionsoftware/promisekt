@@ -3,7 +3,9 @@ package com.inmotionsoftware.promisekt
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executor
 
-// A `Guarantee` is a functional abstraction around an asynchronous operation that cannot error.
+/**
+ * A `Guarantee` is a functional abstraction around an asynchronous operation that cannot error.
+ */
 class Guarantee<T>: Thenable<T> {
     internal val box: Box<T>
 

@@ -10,6 +10,15 @@ object DispatchExecutor {
     val global: Executor by lazy { Executors.newCachedThreadPool() }
 }
 
+/**
+ * Asynchronously executes the provided closure on an Executor.
+ *
+ *  DispatchExecutor.global().async {
+ *      // a long runing task
+ *  }
+ *
+ * @param body: The closure to run on the Executor
+ */
 fun Executor?.async(body: () -> Unit) {
     when (this) {
         null -> body()
@@ -17,6 +26,18 @@ fun Executor?.async(body: () -> Unit) {
     }
 }
 
+/**
+ * Asynchronously executes the provided closure on an Executor.
+ *
+ *  DispatchExecutor.global().async(.promise) {
+ *      1
+ *  }.done {
+ *           //…
+ *  }
+ *
+ * @param body: The closure that resolves this promise.
+ * @return A new `Promise` resolved by the result of the provided closure.
+ */
 fun <T> Executor?.async(namespace: PMKNamespacer, body: () -> T): Promise<T> {
     val promise = Promise<T>(PMKUnambiguousInitializer.pending)
     async {

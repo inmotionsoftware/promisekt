@@ -16,7 +16,7 @@ interface Box<T> {
     fun seal(value: T)
 }
 
-class SealedBox<T>(val value: T): Box<T> {
+internal class SealedBox<T>(val value: T): Box<T> {
     override fun inspect(): Sealant<T> {
         return Sealant.resolved(value = this.value)
     }
