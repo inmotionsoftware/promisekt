@@ -114,6 +114,24 @@ class PromiseTests: AsyncTests() {
     }
 
     @Test
+    fun testTap() {
+        val e = CountDownLatch(1)
+
+        Promise.value(1).tap {
+            when (it) {
+                is Result.fulfilled -> {
+                    assertEquals(1, it.value)
+                    e.countDown()
+                }
+                else -> {
+                    fail()
+                }
+            }
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
     fun testWait() {
         val p = after(0.1).thenPromise(on = null){ Promise.value(1) }
         assertEquals(try { p.wait() } catch(e: Throwable) {}, 1)

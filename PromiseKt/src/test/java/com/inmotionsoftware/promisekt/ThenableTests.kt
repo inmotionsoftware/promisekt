@@ -147,6 +147,30 @@ class ThenableTests: AsyncTests() {
     }
 
     @Test
+    fun testFilterValues() {
+        val e = CountDownLatch(1)
+        Promise.value(arrayListOf(1,2,3,4)).filterValues {
+            it != 2
+        }.done {
+            assertEquals(arrayListOf(1, 3, 4), it)
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
+    fun testSortedValues() {
+        val e = CountDownLatch(1)
+        Promise.value(arrayListOf(1, 4, 3, 2)).sortedValues {
+            it
+        }.done {
+            assertEquals(arrayListOf(1, 2, 3, 4), it)
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
     fun testLastValueForEmpty() {
         assert(Promise.value(emptyList<Int>()).lastValue.isRejected)
     }

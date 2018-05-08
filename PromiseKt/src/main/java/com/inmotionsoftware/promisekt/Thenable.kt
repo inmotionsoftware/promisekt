@@ -102,7 +102,7 @@ fun <T> Thenable<T>.done(on: Executor? = conf.Q.`return`, body: (T) -> Unit): Pr
     return rp
 }
 
-fun <T> Thenable<T>.get(on: Executor? = conf.Q.`return`, body: (T) -> Unit): Promise<T> {
+inline fun <T> Thenable<T>.get(on: Executor? = conf.Q.`return`, crossinline body: (T) -> Unit): Promise<T> {
     return map(on = on) {
         body(it)
         it
@@ -113,7 +113,7 @@ fun <T> Thenable<T>.asVoid(): Promise<Unit> {
     return map(on = null) { }
 }
 
-val <T> Thenable<T>.error: Throwable? get() {
+inline val <T> Thenable<T>.error: Throwable? get() {
     val r = result
     return when (r) {
         is Result.rejected -> r.error
@@ -121,23 +121,23 @@ val <T> Thenable<T>.error: Throwable? get() {
     }
 }
 
-val <T> Thenable<T>.isPending: Boolean get() {
+inline val <T> Thenable<T>.isPending: Boolean get() {
     return result == null
 }
 
-val <T> Thenable<T>.isResolved: Boolean get() {
+inline val <T> Thenable<T>.isResolved: Boolean get() {
     return !isPending
 }
 
-val <T> Thenable<T>.isFulfilled: Boolean get() {
+inline val <T> Thenable<T>.isFulfilled: Boolean get() {
     return value != null
 }
 
-val <T> Thenable<T>.isRejected: Boolean get() {
+inline val <T> Thenable<T>.isRejected: Boolean get() {
     return error != null
 }
 
-val <T> Thenable<T>.value: T? get() {
+inline val <T> Thenable<T>.value: T? get() {
     val r = result
     return when (r) {
         is Result.fulfilled -> r.value
@@ -147,11 +147,11 @@ val <T> Thenable<T>.value: T? get() {
 
 // Thenable where T: Iterable
 
-fun <E, T: Iterable<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<Iterable<U>> {
+inline fun <E, T: Iterable<E>, U> Thenable<T>.mapValues(on: Executor? = conf.Q.map, crossinline transform: (E) -> U): Promise<Iterable<U>> {
     return map(on = on){ it.map(transform) }
 }
 
-fun <E, T: Iterable<E>, UE, U: Iterable<UE>> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, transform: (E) -> U): Promise<Iterable<UE>> {
+inline fun <E, T: Iterable<E>, UE, U: Iterable<UE>> Thenable<T>.flatMapValues(on: Executor? = conf.Q.map, crossinline transform: (E) -> U): Promise<Iterable<UE>> {
     return map(on = on) { foo ->
         foo.flatMap {
             transform(it).flatMap { listOf(it) }
@@ -159,7 +159,7 @@ fun <E, T: Iterable<E>, UE, U: Iterable<UE>> Thenable<T>.flatMapValues(on: Execu
     }
 }
 
-fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.map, transform: (E) -> U?): Promise<Iterable<U>> {
+inline fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = conf.Q.map, crossinline transform: (E) -> U?): Promise<Iterable<U>> {
     return map(on = on) { foo ->
         foo.flatMap {
             val value = transform(it)
@@ -212,7 +212,7 @@ fun <E, T: Iterable<E>, UE, U: Iterable<UE>, TU: Thenable<U>> Thenable<T>.thenFl
     return rp
 }
 
-fun <E, T: Iterable<E>> Thenable<T>.filterValues(on: Executor? = conf.Q.map, isIncluded: (E) -> Boolean): Promise<Iterable<E>> {
+inline fun <E, T: Iterable<E>> Thenable<T>.filterValues(on: Executor? = conf.Q.map, crossinline isIncluded: (E) -> Boolean): Promise<Iterable<E>> {
     return map(on = on) { it.filter(isIncluded)}
 }
 
@@ -238,6 +238,6 @@ val <E, T: Iterable<E>> Thenable<T>.lastValue: Promise<E>
     }
 }
 
-fun <E: Comparable<E>, T: Iterable<E>> Thenable<T>.sortedValues(on: Executor? = conf.Q.map, selector: (E) -> E?): Promise<Iterable<E>> {
+inline fun <E: Comparable<E>, T: Iterable<E>> Thenable<T>.sortedValues(on: Executor? = conf.Q.map, crossinline selector: (E) -> E?): Promise<Iterable<E>> {
     return map(on = on) { it.sortedBy(selector) }
 }
