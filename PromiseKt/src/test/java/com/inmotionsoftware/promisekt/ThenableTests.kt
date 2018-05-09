@@ -125,7 +125,7 @@ class ThenableTests: AsyncTests() {
     @Test
     fun testThenMap() {
         val e = CountDownLatch(1)
-        Promise.value(arrayListOf(1, 2, 3, 4)).thenMap {
+        Promise.value(arrayListOf(1, 2, 3, 4)).thenMapValues {
             Promise.value(it * 2)
         }.done {
             assertEquals(arrayListOf(2, 4, 6, 8), it)
@@ -137,7 +137,7 @@ class ThenableTests: AsyncTests() {
     @Test
     fun testThenFlatMap() {
         val e = CountDownLatch(1)
-        Promise.value(arrayListOf(1,2,3,4)).thenFlatMap {
+        Promise.value(arrayListOf(1,2,3,4)).thenFlatMapValues {
             Promise.value(arrayListOf(it, it))
         }.done {
             assertEquals(arrayListOf(1, 1, 2, 2, 3, 3, 4, 4), it)

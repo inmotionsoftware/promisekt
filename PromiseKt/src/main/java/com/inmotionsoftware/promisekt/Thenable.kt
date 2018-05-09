@@ -91,6 +91,31 @@ fun <T, U> Thenable<T>.map(on: Executor? = conf.Q.map, transform: (T) -> U): Pro
     return rp
 }
 
+fun <T, U, TU: Thenable<U>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, body: (T) -> TU): Promise<U> {
+    val rp = Promise<U>(PMKUnambiguousInitializer.pending)
+    pipe {
+        when (it) {
+            is Result.fulfilled -> {
+                on.async {
+                    try {
+                        val rv = body(it.value)
+                        if (rv === rp) {
+                            throw PMKError.returnedSelf()
+                        }
+                        rv.pipe(to = rp.box::seal)
+                    } catch (e: Throwable) {
+                        rp.box.seal(Result.rejected(e))
+                    }
+                }
+            }
+            is Result.rejected -> {
+                rp.box.seal(Result.rejected(it.error))
+            }
+        }
+    }
+    return rp
+}
+
 /**
  * The provided closure is executed when this promise is resolved.
  *
@@ -319,7 +344,7 @@ inline fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = c
  *      // it => [2,4,6]
  *   }
  */
-fun <E, T: Iterable<E>, U, TU: Thenable<U>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<U>> {
+fun <E, T: Iterable<E>, U, TU: Thenable<U>> Thenable<T>.thenMapValues(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<U>> {
     val rp = Promise<Iterable<U>>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
@@ -352,7 +377,7 @@ fun <E, T: Iterable<E>, U, TU: Thenable<U>> Thenable<T>.thenMap(on: Executor? = 
  *      // it => [1,1,2,2,3,3]
  *   }
  */
-fun <E, T: Iterable<E>, UE, U: Iterable<UE>, TU: Thenable<U>> Thenable<T>.thenFlatMap(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<UE>> {
+fun <E, T: Iterable<E>, UE, U: Iterable<UE>, TU: Thenable<U>> Thenable<T>.thenFlatMapValues(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<UE>> {
     val rp = Promise<Iterable<UE>>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
