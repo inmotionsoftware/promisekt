@@ -5,7 +5,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.math.max
 
-object DispatchExecutor {
+internal object DispatchExecutor {
     val main: Executor by lazy { Executors.newSingleThreadExecutor() }
     val global: Executor by lazy { Executors.newCachedThreadPool() }
 }
@@ -19,7 +19,7 @@ object DispatchExecutor {
  *
  * @param body: The closure to run on the Executor
  */
-fun Executor?.async(body: () -> Unit) {
+internal fun Executor?.async(body: () -> Unit) {
     when (this) {
         null -> body()
         else -> execute(body)
@@ -38,7 +38,7 @@ fun Executor?.async(body: () -> Unit) {
  * @param body: The closure that resolves this promise.
  * @return A new `Promise` resolved by the result of the provided closure.
  */
-fun <T> Executor?.async(namespace: PMKNamespacer, body: () -> T): Promise<T> {
+internal fun <T> Executor?.async(namespace: PMKNamespacer, body: () -> T): Promise<T> {
     val promise = Promise<T>(PMKUnambiguousInitializer.pending)
     async {
         try {
@@ -50,14 +50,14 @@ fun <T> Executor?.async(namespace: PMKNamespacer, body: () -> T): Promise<T> {
     return promise
 }
 
-fun Executor.asyncAfter(seconds: Double, invoke: () -> Unit) {
+internal fun Executor.asyncAfter(seconds: Double, invoke: () -> Unit) {
     execute {
         Thread.sleep((max(seconds, 0.0) * 1000).toLong())
         invoke()
     }
 }
 
-fun Executor?.sync(body: () -> Unit) {
+internal fun Executor?.sync(body: () -> Unit) {
     when (this) {
         null -> body()
         else -> {
