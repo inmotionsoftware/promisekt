@@ -13,6 +13,15 @@ private fun <T, U: Thenable<T>> _when(thenables: Iterable<U>, executor: Executor
     val rp = Promise<Unit>(PMKUnambiguousInitializer.pending)
     val lock = Object()
 
+    val shutdownExecutor: () -> Unit = {
+        try {
+            executor.shutdown()
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
+        } catch (e: Throwable) {
+            rp.box.seal(Result.rejected(e))
+        }
+    }
+
     thenables.forEach { promise ->
         promise.pipe { result ->
             executor.submit {
@@ -21,23 +30,19 @@ private fun <T, U: Thenable<T>> _when(thenables: Iterable<U>, executor: Executor
                         is Result.rejected -> {
                             if (rp.isPending) {
                                 rp.box.seal(Result.rejected(result.error))
+                                shutdownExecutor()
                             }
                         }
                         is Result.fulfilled -> {
                             if (rp.isPending && countdown.decrementAndGet() == 0) {
                                 rp.box.seal(Result.fulfilled(Unit))
+                                shutdownExecutor()
                             }
                         }
                     }
                 }
             }
         }
-    }
-    try {
-        executor.shutdown()
-        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
-    } catch (e: Throwable) {
-        rp.box.seal(Result.rejected(e))
     }
     return rp
 }
