@@ -48,8 +48,8 @@ class PMKFinalizer {
     /**
      * `finally` is the same as `ensure`, but it is not chainable
      */
-    fun finally(body: (Unit) -> Unit) {
-        pending.first.done(body = body)
+    fun finally(on: Executor? = conf.Q.`return`, body: (Unit) -> Unit) {
+        pending.first.done(on = on, body = body)
     }
 }
 
