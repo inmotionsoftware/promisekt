@@ -119,6 +119,21 @@ class WhenTests: AsyncTests() {
     }
 
     @Test
+    fun testAllSealedRejectedSecondOneRejects() {
+        val e = CountDownLatch(1)
+        val test2 = TestError.test2()
+        val p1 = Promise.value(Unit)
+        val p2 = Promise<Void>(error = test2)
+        val p3 = Promise<Void>(error = TestError.test3())
+
+        whenFulfilled(p1, p2, p3).catch { error ->
+            assertTrue(error == test2)
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 100)
+    }
+
+    @Test
     fun testGuaranteeWhen() {
         val e = CountDownLatch(2)
         whenGuarantee(Guarantee.value(Unit), Guarantee.value(Unit)).done { e.countDown() }

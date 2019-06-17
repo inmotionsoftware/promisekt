@@ -13,7 +13,11 @@ private fun <T, U: Thenable<T>> _when(thenables: Iterable<U>, executor: Executor
     val rp = Promise<Unit>(PMKUnambiguousInitializer.pending)
     val lock = Object()
 
-    val shutdownExecutor: () -> Unit = {
+    val executorSubmissions = AtomicInteger(0)
+
+    fun shutdownExecutor() {
+        if(executorSubmissions.get() != 0) return
+
         try {
             executor.shutdown()
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
@@ -23,8 +27,10 @@ private fun <T, U: Thenable<T>> _when(thenables: Iterable<U>, executor: Executor
     }
 
     thenables.forEach { promise ->
+        executorSubmissions.incrementAndGet()
         promise.pipe { result ->
             executor.submit {
+                executorSubmissions.decrementAndGet()
                 synchronized(lock = lock) {
                     when (result) {
                         is Result.rejected -> {
