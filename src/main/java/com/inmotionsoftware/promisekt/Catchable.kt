@@ -183,8 +183,8 @@ fun <T> CatchMixin<T>.ensureThen(on: Executor? = PMKConfiguration.Q.`return`, bo
  * Provide this to be compatible with the Swift's version, but is not needed in Kotlin.
  * Note: You should `catch`, but in situations where you know you don’t need a `catch`, `cauterize` makes your intentions clear.
  */
-fun <T> CatchMixin<T>.cauterize() {
-    catch {
+fun <T> CatchMixin<T>.cauterize(): PMKFinalizer {
+    return this.catch {
         println("PromiseKot:cauterized-error: $it")
     }
 }
