@@ -14,9 +14,10 @@ private fun <T> _when(thenables: Iterable<Thenable<T>>, executor: ExecutorServic
     val lock = Object()
 
     val executorSubmissions = AtomicInteger(0)
+    val thenableSize = thenables.count()
 
     fun shutdownExecutor() {
-        if(executorSubmissions.get() != 0) return
+        if(executorSubmissions.get() != thenableSize) return
 
         try {
             executor.shutdown()
@@ -27,26 +28,24 @@ private fun <T> _when(thenables: Iterable<Thenable<T>>, executor: ExecutorServic
     }
 
     thenables.forEach { promise ->
-        executorSubmissions.incrementAndGet()
         promise.pipe { result ->
             executor.submit {
-                executorSubmissions.decrementAndGet()
+                executorSubmissions.incrementAndGet()
                 synchronized(lock = lock) {
                     when (result) {
                         is Result.rejected -> {
                             if (rp.isPending) {
                                 rp.box.seal(Result.rejected(result.error))
-                                shutdownExecutor()
                             }
                         }
                         is Result.fulfilled -> {
                             if (rp.isPending && countdown.decrementAndGet() == 0) {
                                 rp.box.seal(Result.fulfilled(Unit))
-                                shutdownExecutor()
                             }
                         }
                     }
                 }
+                shutdownExecutor()
             }
         }
     }

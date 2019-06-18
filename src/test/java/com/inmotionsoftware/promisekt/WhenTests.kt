@@ -3,8 +3,7 @@ package com.inmotionsoftware.promisekt
 import com.inmotionsoftware.promisekt.features.whenFulfilled
 import com.inmotionsoftware.promisekt.features.whenGuarantee
 import com.inmotionsoftware.promisekt.features.whenResolved
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
 
@@ -119,17 +118,20 @@ class WhenTests: AsyncTests() {
     }
 
     @Test
-    fun testAllSealedRejectedSecondOneRejects() {
+    fun testAllSealedOneRejects() {
         val e = CountDownLatch(1)
         val test2 = TestError.test2()
+        val test3 = TestError.test3()
         val p1 = Promise.value(Unit)
         val p2 = Promise<Void>(error = test2)
-        val p3 = Promise<Void>(error = TestError.test3())
+        val p3 = Promise<Void>(error = test3)
 
-        whenFulfilled(p1, p2, p3).catch { error ->
-            assertTrue(error == test2)
-            e.countDown()
-        }
+        whenFulfilled(p1, p2, p3)
+            .done { fail() }
+            .catch { error ->
+                assertTrue(error == test2 || error == test3)
+                e.countDown()
+            }
         wait(countDown = e, timeout = 100)
     }
 
