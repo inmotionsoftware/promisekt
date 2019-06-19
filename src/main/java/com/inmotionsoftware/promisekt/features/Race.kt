@@ -13,7 +13,7 @@ import com.inmotionsoftware.promisekt.*
  * Warning: If any of the provided promises reject, the returned promise is rejected.
  * Remark: Returns promise rejected with PMKError.badInput if empty list provided
  */
-fun <T, U: Thenable<T>> race(vararg thenables: U): Promise<T> {
+fun <T> race(vararg thenables: Thenable<T>): Promise<T> {
     return race(thenables.asIterable())
 }
 
@@ -28,7 +28,7 @@ fun <T, U: Thenable<T>> race(vararg thenables: U): Promise<T> {
  * Warning: If any of the provided promises reject, the returned promise is rejected.
  * Remark: Returns promise rejected with PMKError.badInput if empty list provided
  */
-fun <T, U: Thenable<T>> race(thenables: Iterable<U>): Promise<T> {
+fun <T> race(thenables: Iterable<Thenable<T>>): Promise<T> {
     if (thenables.count() == 0) return Promise(error = PMKError.badInput())
 
     val rp = Promise<T>(PMKUnambiguousInitializer.pending)

@@ -68,7 +68,7 @@ class PMKFinalizer {
  * @param on: The executor to which the provided closure dispatches.
  * @param body: The handler to execute if this promise is rejected.
  */
-fun <T, U: Thenable<T>> CatchMixin<T>.recover(on: Executor? = PMKConfiguration.Q.map, policy: CatchPolicy = PMKConfiguration.catchPolicy, body: (Throwable) -> U): Promise<T> {
+fun <T> CatchMixin<T>.recover(on: Executor? = PMKConfiguration.Q.map, policy: CatchPolicy = PMKConfiguration.catchPolicy, body: (Throwable) -> Thenable<T>): Promise<T> {
     val rp = Promise<T>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
