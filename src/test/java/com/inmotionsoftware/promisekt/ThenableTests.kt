@@ -125,6 +125,18 @@ class ThenableTests: AsyncTests() {
     @Test
     fun testThenMap() {
         val e = CountDownLatch(1)
+        Promise.value(4).thenMap {
+            Promise.value("num is: $it")
+        }.done {
+            assertEquals("num is: 4", it)
+            e.countDown()
+        }
+        wait(countDown = e, timeout = 10)
+    }
+
+    @Test
+    fun testThenMapValues() {
+        val e = CountDownLatch(1)
         Promise.value(arrayListOf(1, 2, 3, 4)).thenMapValues {
             Promise.value(it * 2)
         }.done {

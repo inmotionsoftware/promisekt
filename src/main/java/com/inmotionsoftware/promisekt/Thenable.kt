@@ -91,7 +91,7 @@ fun <T, U> Thenable<T>.map(on: Executor? = conf.Q.map, transform: (T) -> U): Pro
     return rp
 }
 
-fun <T, U, TU: Thenable<U>> Thenable<T>.thenMap(on: Executor? = conf.Q.map, body: (T) -> TU): Promise<U> {
+fun <T, U> Thenable<T>.thenMap(on: Executor? = conf.Q.map, body: (T) -> Thenable<U>): Promise<U> {
     val rp = Promise<U>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
@@ -344,7 +344,7 @@ inline fun <E, T: Iterable<E>, U> Thenable<T>.compactMapValues(on: Executor? = c
  *      // it => [2,4,6]
  *   }
  */
-fun <E, T: Iterable<E>, U, TU: Thenable<U>> Thenable<T>.thenMapValues(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<U>> {
+fun <E, T: Iterable<E>, U> Thenable<T>.thenMapValues(on: Executor? = conf.Q.map, transform: (E) -> Thenable<U>): Promise<Iterable<U>> {
     val rp = Promise<Iterable<U>>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
