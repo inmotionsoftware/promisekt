@@ -28,7 +28,7 @@ interface Thenable<T> {
  *      //…
  *   }
  */
-fun <T, U: Thenable<T>> Thenable<T>.then(on: Executor? = conf.Q.map, body: (T) -> U): Promise<T> {
+fun <T> Thenable<T>.then(on: Executor? = conf.Q.map, body: (T) -> Thenable<T>): Promise<T> {
     val rp = Promise<T>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
@@ -377,7 +377,7 @@ fun <E, T: Iterable<E>, U> Thenable<T>.thenMapValues(on: Executor? = conf.Q.map,
  *      // it => [1,1,2,2,3,3]
  *   }
  */
-fun <E, T: Iterable<E>, UE, U: Iterable<UE>, TU: Thenable<U>> Thenable<T>.thenFlatMapValues(on: Executor? = conf.Q.map, transform: (E) -> TU): Promise<Iterable<UE>> {
+fun <E, T: Iterable<E>, UE, U: Iterable<UE>> Thenable<T>.thenFlatMapValues(on: Executor? = conf.Q.map, transform: (E) -> Thenable<U>): Promise<Iterable<UE>> {
     val rp = Promise<Iterable<UE>>(PMKUnambiguousInitializer.pending)
     pipe {
         when (it) {
