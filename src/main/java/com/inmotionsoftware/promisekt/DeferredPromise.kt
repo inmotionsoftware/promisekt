@@ -9,7 +9,7 @@ class DeferredPromise<T> {
     }
 
     fun resolve(value: T) {
-        this.resolver.resolve(value, error = null)
+        this.resolver.fulfill(value)
     }
 
     fun reject(error: Throwable) {
