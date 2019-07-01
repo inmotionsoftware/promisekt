@@ -47,7 +47,7 @@ fun <T> race(thenables: Iterable<Thenable<T>>): Promise<T> {
  *
  * @return: A new guarantee that resolves when the first guaranteed in the provided guarantees resolves.
  */
-fun <T, U: Guarantee<T>> raceGuarantee(vararg guarantees: U): Guarantee<T> {
+fun <T> raceGuarantee(vararg guarantees: Guarantee<T>): Guarantee<T> {
     return raceGuarantee(guarantees.asIterable())
 }
 
@@ -60,7 +60,7 @@ fun <T, U: Guarantee<T>> raceGuarantee(vararg guarantees: U): Guarantee<T> {
  *
  * @return: A new guarantee that resolves when the first guaranteed in the provided guarantees resolves.
  */
-fun <T, U: Guarantee<T>> raceGuarantee(guarantees: Iterable<U>): Guarantee<T> {
+fun <T> raceGuarantee(guarantees: Iterable<Guarantee<T>>): Guarantee<T> {
     val rg = Guarantee<T>(PMKUnambiguousInitializer.pending)
     guarantees.forEach {
         it.pipeTo(to = rg.box::seal)

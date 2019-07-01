@@ -41,6 +41,6 @@ fun <T> firstly(body: () -> Thenable<T>): Promise<T> {
 /**
  * Same as `firstly` but resolves in a Guarantee.
  */
-fun <T, U: Guarantee<T>> firstlyGuarantee(body: () -> U): Guarantee<T> {
+fun <T> firstlyGuarantee(body: () -> Guarantee<T>): Guarantee<T> {
     return body()
 }
