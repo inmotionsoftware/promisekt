@@ -83,7 +83,7 @@ fun <T> CatchMixin<T>.recover(on: Executor? = PMKConfiguration.Q.map, policy: Ca
                             if (rv === rp) { throw PMKError.returnedSelf() }
                             rv.pipe(to = rp.box::seal)
                         } catch (e: Throwable) {
-                            rp.box.seal(Result.rejected(it.error))
+                            rp.box.seal(Result.rejected(e))
                         }
                     }
                 } else {
