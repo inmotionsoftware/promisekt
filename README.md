@@ -2,7 +2,24 @@
 # Kotlin port of Swift PromiseKit
 #### https://github.com/mxcl/PromiseKit
 
-## Setup
+## Install and Setup
+
+Add JitPack as a repository
+```groovy
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Add PromiseKt as a dependency
+```groovy
+implementation 'com.github.inmotionsoftware:promisekt:1.0.0'
+```
+
 PromiseKt allows you to choose which executor you want your code to run on.
 For convenience define your main and background Executors
 

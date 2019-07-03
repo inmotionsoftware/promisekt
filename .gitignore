@@ -12,3 +12,4 @@ PromiseKt/build
 /bin
 */out
 */.idea
+/AndroidExample/app/build/
